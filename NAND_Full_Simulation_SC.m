@@ -54,18 +54,18 @@ USE_HSRC = true;
 USE_ADVANCED_VISUALISATION = true;
 DO_DIELECTRIC_SMOOTHING = true;
 APPLY_NONLINEARITY = true;
-USE_SINGLE_PRECISION = true;
+USE_SINGLE_PRECISION = false;
 
 % QUALITY OF LIFE PARAMETERS
 DISPLAY_LABELS = true;
-AUTO_FPS_ADJUSTMENT = false;
+AUTO_FPS_ADJUSTMENT = true;
 SHUTDOWN_ON_EXIT = false;
 PLAY_ON_FINISH = false;
 DISPLAY_TRANSFER_WINDOW = true;
 
 % LEARNING OPTIONS
 DO_FOURIER_TRANSFORM = false;
-DO_TRANSFER_CALCULATION = true;
+DO_TRANSFER_CALCULATION = false;
 
 % ADVANCED TESTING
 USE_EMPTY_GRID      = false;
@@ -89,9 +89,9 @@ cases_upper_NOT = [0,0,0,0];%[40];
 cases_middle_NOT= [0,0,0,0];%[110];
 cases_lower_NOT = [0,0,0,0];%[-90];
 
-cases_brd_dim = [0.2100 0.2500 0.3200];
+cases_brd_dim = [0.1000];
 
-totalCases = 3;
+totalCases = 1;
 % plot(cases);
 % break;
 for ncase = 1:totalCases
@@ -132,7 +132,7 @@ FMAX    = 5.0 * gigahertz;
 NFREQ   = 1000;
 FREQ    = linspace(0,FMAX,NFREQ);
 LAMD    = 1.55 * micrometers;
-STEPS   = 240000;
+STEPS   = 200000;
 BEAM_WIDTH   = round(NCELL(2) * sqrt(3)/2 / 2);
 SRC_START_WIDTH = 1200;
 SRC_START   = SRC_START_WIDTH * 4;
@@ -160,12 +160,14 @@ LOWER_NEXT_PULSE_AFTER_NOT = 80000;   %%
 PHASE_DEVIATION = 0; %in degrees
 FREQ_DEVIATION = 1;
 
+gen_name_prefix = 'xl_and_arrow_';
+
 % PLOT PARAMETERS%%
 FULLSCREEN = false;              
-RECORD_ANIMATION = true;        %%
+RECORD_ANIMATION = false;        %%
 FPS = 1000;
 movie_duration = 25 * seconds;
-movie_name = ['xl_nand_prt_brd_',num2str(round(cases_brd_dim(ncase) * 10000)),'_'];
+movie_name = [gen_name_prefix,num2str(round(cases_brd_dim(ncase) * 10000)),'_'];
 REC_QUALITY = 100;
 FRAME_RATE = 30;
 plotting_amp = 80;
@@ -174,7 +176,7 @@ plotting_amp = 80;
 RECORD_FIELDS = true;               %%  
 DO_FULL_RECORDING = true;
 steps_per_recording = 100;
-file_name = ['xl_noport_', num2str(round(cases_brd_dim(ncase) * 1000)),'_brd.mat'];%['NAND_GATE_cases_',num2str(ncase),'_',datestr(now,'mmmm dd HH-MM'),'.mat'];
+file_name = [gen_name_prefix, num2str(round(cases_brd_dim(ncase) * 1000)),'_brd.mat'];%['NAND_GATE_cases_',num2str(ncase),'_',datestr(now,'mmmm dd HH-MM'),'.mat'];
 
 if DO_FULL_RECORDING
     observation_points_upper = 1:1618;
@@ -188,7 +190,7 @@ outlets.AND.lo = false;
 outlets.NOT.md = true;
 outlets.NOT.lo = true;
 
-JUST_VISUALIZE_STRUCTURE = true;
+JUST_VISUALIZE_STRUCTURE = false;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% OPEN A FIGURE WINDOW
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,6 +259,11 @@ diameter_cell_matrix = ones(CellNx,CellNy);
 eps_cell_matrix = eps_cell_matrix .* n_cyl^2;
 half_bridge_len = round(bridge_length/2) + 2;
 
+
+% smaller cylinders in the middle
+diameter_cell_matrix(1:end, linspRound(CellNy/2, 3, 1)) = ...
+    1 / cylinder_diameters(1) * bridge_cylinder_diamters(1);
+
 % AND PART
 % eps_cell_matrix(round(CellNx/2),1:CellNy/2-half_bridge_len)   = n_filler^2;
 % eps_cell_matrix(round(CellNx/2)-2,1:CellNy/2-half_bridge_len) = n_filler^2;
@@ -283,9 +290,10 @@ diameter_cell_matrix(round(CellNx/2)  +2,CellNy/2+half_bridge_len:CellNy) = -2i;
 diameter_cell_matrix(round(CellNx/2)-2+2,CellNy/2+half_bridge_len:CellNy) = -2i;
 diameter_cell_matrix(round(CellNx/2)+2+2,CellNy/2+half_bridge_len:CellNy) = -2i;
 
-% smaller cylinders in the middle
-diameter_cell_matrix(1:end, linspRound(CellNy/2, 2, 1)) = ...
-    1 / cylinder_diameters(1) * bridge_cylinder_diamters(1);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% THE BRIDGE
+
 
 % OUTLETS
  % AND PART
@@ -377,8 +385,6 @@ diameter_cell_matrix(1:end, linspRound(CellNy/2, 2, 1)) = ...
             CellNy/2+half_bridge_len+jdiff-1)     = chi3;  
   end
  end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%% THE BRIDGE
 
 % REMOVE MID SECTION CYLINDERS
 % eps_cell_matrix(1:CellNx,...
@@ -420,6 +426,13 @@ diameter_cell_matrix(round(CellNx/2), linspRound(CellNy/2, 2, 1)) = -2i;
 %     round(CellNy/2) - 4) = 1 / cylinder_diameters(1) * bending_cylinder_diameters(1);
 % diameter_cell_matrix(round(CellNx/2) + 3,...
 %     round(CellNy/2) - 3) = 1 / cylinder_diameters(1) * bending_cylinder_diameters(1);
+
+% Cutting the arrowhead at the end of AND part
+
+diameter_cell_matrix(round(CellNx/2) - 1,...
+    round(CellNy/2) - 3) = -2i;
+diameter_cell_matrix(round(CellNx/2) + 1,...
+    round(CellNy/2) - 3) = -2i;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PECs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -981,10 +994,10 @@ if JUST_VISUALIZE_STRUCTURE
         Ny_src_lo_AND-1:Ny_src_lo_AND+1) = -10;
     ERy(Nx_src_lo_NOT:Nx_src_hi_NOT, ...
         Ny_src_lo_NOT-1:Ny_src_lo_NOT+1) = -10;
-
-    ERx(rec_line_AND.x, rec_line_AND.y) = 0;
-    ERx(rec_line_NOT.x, rec_line_NOT.y) = 0;
-
+    if DO_TRANSFER_CALCULATION
+        ERx(rec_line_AND.x, rec_line_AND.y) = 0;
+        ERx(rec_line_NOT.x, rec_line_NOT.y) = 0;
+    end
     imagesc(log(1+sigx(1:2:Nx2,2:2:Ny2)+sigy(1:2:Nx2,2:2:Ny2)) + ERx + ERy + log(1e-4+PECx + PECy) +...
             + 0.5.*(ERy+ERx+2.*PECx+2.*PECy));
     axis image;
@@ -1425,9 +1438,9 @@ for T = 1:STEPS
             set(gca,'XTickLabel',[]);
             if DISPLAY_TRANSFER_WINDOW
                 subplot(2,2,[3 4]);
-                plot(curr_trn_hz_NOT(end,:),'b-','LineWidth', 2);
-                hold on;
-                plot(curr_trn_hz_AND(end,:),'r-','LineWidth', 2);
+%                 plot(,'b-','LineWidth', 2);
+%                 hold on;
+                plot(upper_guide_recording(863,:),'r-','LineWidth', 2);
                 hold off;
                 title('Output amplitude');
                 ylim([-1 1] .* plotting_amp);
