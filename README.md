@@ -2,9 +2,17 @@
 
 This code supports the FDTD simulation results presented in 2019 paper "Digital signal processing in coupled photonic crystal waveguides and its application to an all-optical AND logic gate". The paper is available [online](https://doi.org/10.1007/s11082-019-1833-9).
 
+![alt text](assets/figure2.png)
+
+
+
 # Code
 
-Main simulation script is `NAND_Full_Simulation_SC.m`. The file is supposed to be run top-to-bottom, in MatLab. 
+Main simulation script is `NAND_Full_Simulation_SC.m`. The file is supposed to be run top-to-bottom, in MatLab. This code simulates the entire structure. The NOT gate (left) and the AND gate (right). Simulation is CPU-only and thus slow. 
+
+![alt text](assets/structure.png)
+
+Suggested future direction of work, at least on the coding side, should focus on using GPU-acceleration of the simulation. The code is mostly a loop over 2D stencil-kernels. GPUs are well-suited for calculating these.
 
 # Cite as
 

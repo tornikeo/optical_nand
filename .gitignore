@@ -2,4 +2,4 @@
 *.avi
 *.fig
 *.m~
-*.png
+# *.png
