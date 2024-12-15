@@ -1429,7 +1429,7 @@ for T = 1:STEPS
                 gca;
                 c = colorbar;
                 c.Label.String = 'Hz Field Amplitude';
-                caxis([-OPTS.emax OPTS.emax]);
+                % clim([-OPTS.emax OPTS.emax]);
                 xlabel('$\mathbf{X}$','Interpreter', 'latex');
                 ylabel('$\mathbf{Y}$        ','Interpreter', 'latex');
             end
