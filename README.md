@@ -8,7 +8,7 @@ This code supports the FDTD simulation results presented in 2019 paper "Digital 
 
 # Code
 
-Main simulation script is `NAND_Full_Simulation_SC.m`. The file is supposed to be run top-to-bottom, in MatLab. This code simulates the entire structure. The NOT gate (left) and the AND gate (right). Simulation is CPU-only and thus slow. 
+Main simulation script is `NAND_Full_Simulation_SC.m`. The file is supposed to be run top-to-bottom, in MatLab. This code simulates the entire structure. The NOT gate (left) and the AND gate (right). Simulation is CPU-only and thus slow. Alternatively a python script `NAND_Full_Simulation_SC.py` replicates some of the results of `NAND_Full_Simulation_SC.m`. See required python packages in `requirements.txt`
 
 ![alt text](assets/structure.png)
 
